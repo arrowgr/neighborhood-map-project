@@ -1,62 +1,67 @@
 <!doctype html>
 <html>
-<head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Udacity Neighborhood Map Project by Giorgos Mitsoudis</title>
-<meta name="description" content="A project 5 for Udacity front-end web developer nanodegree course">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="author" content="Giorgos Mitsoudis">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-<link rel="stylesheet" href="css/style.css">
-</head>
-<body>
-<section>
-  <div class="container-full">
-    <div class="row coverall">
-      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-2 list">
-        <div class="box">
-          <h1>Learn Thessaloniki</h1>
-          <div>
-	<!-- The two bindings send the filterStr term to the filter function -->
-			<form id="filter" data-bind="submit: filter">
-				
-				<!-- This search field is linked via jQuery to an EasyAutoComplete
+    <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Udacity Neighborhood Map Project by Giorgos Mitsoudis</title>
+    <meta name="description" content="A project 5 for Udacity front-end web developer nanodegree course">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Giorgos Mitsoudis">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="js/knockout-3.4.1.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="js/app.js"></script>
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyABgZNX6-ZIXPJ--5cOrxaGHs_JptxD4cY&v=3&callback=initMap">
+    </script>
+    </head>
+    <body>
+    <section>
+      <div class="container-full">
+        <div class="row coverall">
+          <div class="col-xs-12 col-sm-12 col-md-3 col-lg-2 list">
+            <div class="box">
+              <h1>Learn Thessaloniki</h1>
+              <div> 
+                <!-- The two bindings send the filterStr term to the filter function -->
+                <form id="filter" >
+                  
+                  <!-- This search field is linked via jQuery to an EasyAutoComplete
 				 feature in the ViewModel -->
-				<input id="search" type="text" placeholder="Search for something" 
-					data-bind="value: filterStr">
-				<!-- The green check button -->
-				<input id="submit" type="submit" value="">
-				
-				<!-- Binds the show button (circular arrow) to showAll function, 
+                  <div class="ui-widget">
+                    <label for="tags">Tags: </label>
+                    <input id="tags" placeholder="Autocomplete from the list">
+                  </div>
+                  <!-- The green check button -->
+                  <button class="fa fa-check"  id="show"></button>
+                  <button class="fa fa-refresh" id="submit" type="submit"></button>
+                  
+                <!--     <button class="fa fa-check"  id="show" data-bind="click: showAll"></button> -->
+                  <!-- Binds the show button (circular arrow) to showAll function, 
 				restores all items to the menu -->
-				<button id="show" data-bind="click: showAll"></button>
-			</form>
-            <hr>
-          <ul id="menu" data-bind="template: { name: 'profileListTemplate', foreach: location } ">
-			
-				<!-- Binds each list item to a title of a place in array,
+                  
+                </form>
+                <hr>
+                <ul id="menu" data-bind="foreach: log">
+                  
+                  <!-- Binds each list item to a title of a place in array,
 				 sets a click action to activate the match function,
 				 makes a visible binding to the visible property
 				 of the cooresponsing place-->
-				<li data-bind="text: title"></li>
-			</ul>
+                  <li class="name-art" data-bind="text: title"></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div  class="col-xs-12 col-sm-12 col-md-9 col-lg-10 map">
+            <div id="map"></div>
           </div>
         </div>
       </div>
-      <div  class="col-xs-12 col-sm-12 col-md-9 col-lg-10 map">
-        <div id="map"></div>
-      </div>
-    </div>
-  </div>
-</section>
-<script src="js/app.js"></script>
-<script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyABgZNX6-ZIXPJ--5cOrxaGHs_JptxD4cY&v=3&callback=initMap">
-    </script> 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> 
-<script src="js/knockout-3.4.1.js"></script> 
-
-
+    </section>
 </body>
 </html>

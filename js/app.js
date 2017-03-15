@@ -70,6 +70,8 @@ function initMap() {
 	}];
 
 
+
+
 	map = new google.maps.Map(document.getElementById('map'), {
 		center: {
 			lat: 40.6212524,
@@ -83,6 +85,7 @@ function initMap() {
 
 
 	// The following group uses the location array to create an array of markers on initialize.
+
 	for (var i = 0; i < locations.length; i++) {
 		// Get the position from the location array.
 		var position = locations[i].location;
@@ -96,9 +99,6 @@ function initMap() {
 			title: title,
 			animation: google.maps.Animation.DROP,
 			id: i
-
-
-
 		});
 		// Push the marker to our array of markers.
 		markers.push(marker);
@@ -110,14 +110,62 @@ function initMap() {
 	}
 	// Extend the boundaries of the map for each marker
 	map.fitBounds(bounds);
+
+	var availableTags = [];
+	for (i = 0; i < locations.length; i++) {
+		availableTags.push(locations[i].title);
+	}
+
+	$("#tags").autocomplete({
+		source: availableTags
+	});
+
+
+	//	console.log(locations.length);
+
+	/*for ( i = 0; i < locations.length; i++) {
+	console.log(locations[i].title);
+}
+*/
+	var viewModel = {
+		log: ko.observableArray(locations)
+	};
+	ko.applyBindings(viewModel);
+	//	ko.applyBindings(new AppViewModel());
+	
+	
+	/*
+	var match = function(x)) {
+
+    this.match = function (data, event){
+    alert('you clicked: ' + event.target.value);
+    }
+};
+
+ko.applyBindings(new match());
+	*/
+	/*
+	function match(x) {
+	for (var i = 0; i < locations.length; i++) {
+		if (locations[i].title == x.title) {
+		//	marker = locations[i];
+			 console.log(locations[i]);
+			/** Centers the clicked marker */
+		//	map.panTo({lat: (x.location.lat), lng: (x.location.lng)});
+		//	infowindow.open(map, marker); 
+			/** Calles toggleBounce, below */
+		//	toggleBounce(x, marker);
+			
+		/*	}
+	}
+	}*/
+
 }
 
- 
-var viewModel = {
-    location: ko.observableArray(locations)
-};
-ko.applyBindings(new viewModel());
 
+
+
+	
 // This function populates the infowindow when the marker is clicked. We'll only allow
 // one infowindow which will open at the marker that is clicked, and populate based
 // on that markers position.
@@ -130,18 +178,23 @@ function populateInfoWindow(marker, infowindow) {
 		var url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=" + coords + "&sensor=false";
 		$.getJSON(url, function (data) {
 			for (var i = 0; i < data.results.length; i++) {
-				 window.adress = data.results[i].formatted_address;
-		
+				window.adress = data.results[i].formatted_address;
+
 			}
 		});
 		var imageStreetView = "https://maps.googleapis.com/maps/api/streetview?size=800x400&location=";
 		infowindow.setContent('<div><h3>' + marker.title + '</h3>' +
-							  '<p>' + window.adress + '</p>' +
+			// '<p>' + window.adress + '</p>' +
 			'<img src="' + imageStreetView + coords + '"></div>');
 		infowindow.open(map, marker);
 		// Make sure the marker property is cleared if the infowindow is closed.
 		infowindow.addListener('closeclick', function () {
 			infowindow.setMarker = null;
 		});
+
+
+
+
 	}
+
 }
