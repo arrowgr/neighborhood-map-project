@@ -112,6 +112,12 @@ function initMap() {
 	map.fitBounds(bounds);
 }
 
+ 
+var viewModel = {
+    location: ko.observableArray(locations)
+};
+ko.applyBindings(new viewModel());
+
 // This function populates the infowindow when the marker is clicked. We'll only allow
 // one infowindow which will open at the marker that is clicked, and populate based
 // on that markers position.

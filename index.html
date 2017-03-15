@@ -18,11 +18,28 @@
         <div class="box">
           <h1>Learn Thessaloniki</h1>
           <div>
-        <form id="new-search">Search
-                    <input type="text" class="text-input" data-bind="value: filter, valueUpdate: 'keyup'">
-                </form>
+	<!-- The two bindings send the filterStr term to the filter function -->
+			<form id="filter" data-bind="submit: filter">
+				
+				<!-- This search field is linked via jQuery to an EasyAutoComplete
+				 feature in the ViewModel -->
+				<input id="search" type="text" placeholder="Search for something" 
+					data-bind="value: filterStr">
+				<!-- The green check button -->
+				<input id="submit" type="submit" value="">
+				
+				<!-- Binds the show button (circular arrow) to showAll function, 
+				restores all items to the menu -->
+				<button id="show" data-bind="click: showAll"></button>
+			</form>
             <hr>
-            <ul>
+          <ul id="menu" data-bind="template: { name: 'profileListTemplate', foreach: location } ">
+			
+				<!-- Binds each list item to a title of a place in array,
+				 sets a click action to activate the match function,
+				 makes a visible binding to the visible property
+				 of the cooresponsing place-->
+				<li data-bind="text: title"></li>
 			</ul>
           </div>
         </div>
@@ -39,6 +56,7 @@
     </script> 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> 
 <script src="js/knockout-3.4.1.js"></script> 
+
 
 </body>
 </html>
