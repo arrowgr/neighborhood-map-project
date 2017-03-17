@@ -115,11 +115,10 @@ function initMap() {
 	for (i = 0; i < locations.length; i++) {
 		availableTags.push(locations[i].title);
 	}
-
-	$("#tags").autocomplete({
-		source: availableTags
-	});
-
+	/*	$("#tags").autocomplete({
+			source: availableTags
+		});
+	*/
 
 	//	console.log(locations.length);
 
@@ -127,13 +126,32 @@ function initMap() {
 	console.log(locations[i].title);
 }
 */
-	var viewModel = {
-		log: ko.observableArray(locations)
+
+
+	var viewModel = function () {
+		var self = this;
+		self.filter = ko.observable('');
+		self.items = ko.observableArray(availableTags)
+
+		self.filteredItems = ko.computed(function () {
+			var filter = self.filter();
+			if (!filter) {
+				return self.items();
+			}
+			return self.items().filter(function (i) {
+				return i.indexOf(filter) > -1;
+			});
+		});
 	};
-	ko.applyBindings(viewModel);
+
+
+	ko.applyBindings(new viewModel());
+
+
+
 	//	ko.applyBindings(new AppViewModel());
-	
-	
+
+
 	/*
 	var match = function(x)) {
 
@@ -151,12 +169,12 @@ ko.applyBindings(new match());
 		//	marker = locations[i];
 			 console.log(locations[i]);
 			/** Centers the clicked marker */
-		//	map.panTo({lat: (x.location.lat), lng: (x.location.lng)});
-		//	infowindow.open(map, marker); 
-			/** Calles toggleBounce, below */
-		//	toggleBounce(x, marker);
-			
-		/*	}
+	//	map.panTo({lat: (x.location.lat), lng: (x.location.lng)});
+	//	infowindow.open(map, marker); 
+	/** Calles toggleBounce, below */
+	//	toggleBounce(x, marker);
+
+	/*	}
 	}
 	}*/
 
@@ -165,7 +183,7 @@ ko.applyBindings(new match());
 
 
 
-	
+
 // This function populates the infowindow when the marker is clicked. We'll only allow
 // one infowindow which will open at the marker that is clicked, and populate based
 // on that markers position.
@@ -176,21 +194,53 @@ function populateInfoWindow(marker, infowindow) {
 
 		var coords = marker.position.toString().replace(/[()]/g, "");
 		var url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=" + coords + "&sensor=false";
-		$.getJSON(url, function (data) {
-			for (var i = 0; i < data.results.length; i++) {
-				window.adress = data.results[i].formatted_address;
-
-			}
-		});
 		var imageStreetView = "https://maps.googleapis.com/maps/api/streetview?size=800x400&location=";
+
+		var urlNewYork = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
+		urlNewYork += '?' + $.param({
+			'api-key': "d025f3b81d514469b78f879e6433e628",
+			'q': marker.title,
+			'sort': "newest",
+			'fl': "lead_paragraph",
+			'page': 0
+		});
+
+		$.ajax({
+			url: url,
+			method: 'GET',
+			success: function (data) {
+				var address = data.results[0].formatted_address;
+
+				$.ajax({
+					url: urlNewYork,
+					method: 'GET',
+					success: function (newdata) {
+					var postNewYork = newdata.response.docs[0].lead_paragraph ;
+						
+								//		console.log(address);
+		// console.log(marker);
 		infowindow.setContent('<div><h3>' + marker.title + '</h3>' +
 			// '<p>' + window.adress + '</p>' +
+			'<h4>' + address + '</h4>' +
+			'<p>' + postNewYork + '</p>'+  
 			'<img src="' + imageStreetView + coords + '"></div>');
 		infowindow.open(map, marker);
 		// Make sure the marker property is cleared if the infowindow is closed.
 		infowindow.addListener('closeclick', function () {
 			infowindow.setMarker = null;
 		});
+
+
+					},
+
+				});
+
+			},
+
+		});
+
+
+
 
 
 
