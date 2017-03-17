@@ -15,7 +15,6 @@
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="js/app.js"></script>
-   
     <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyABgZNX6-ZIXPJ--5cOrxaGHs_JptxD4cY&v=3&callback=initMap">
     </script>
@@ -41,7 +40,7 @@
                   <button class="fa fa-check"  id="show"></button>
                   <button class="fa fa-refresh" id="submit" type="submit"></button>
                   
-                <!--     <button class="fa fa-check"  id="show" data-bind="click: showAll"></button> -->
+                  <!--     <button class="fa fa-check"  id="show" data-bind="click: showAll"></button> --> 
                   <!-- Binds the show button (circular arrow) to showAll function, 
 				restores all items to the menu -->
                   
@@ -53,7 +52,7 @@
 				 sets a click action to activate the match function,
 				 makes a visible binding to the visible property
 				 of the cooresponsing place-->
-                  <li class="name-art" data-bind="text: $data"></li>
+                  <li class="name-art" data-bind="text: title"></li>
                 </ul>
               </div>
             </div>

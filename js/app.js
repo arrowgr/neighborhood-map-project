@@ -6,6 +6,63 @@ var map;
 // Create a new blank array for all the listing markers.
 var markers = [];
 
+
+
+// Constructor creates a new map - only center and zoom are required.
+
+
+// These are the real estate listings that will be shown to the user.
+// Normally we'd have these in a database instead.
+var locations = [{
+	title: 'Macedonian Museum of Contemporary Art',
+	location: {
+		lat: 40.627276,
+		lng: 22.95465
+	}
+}, {
+	title: 'White Tower of Thessaloniki',
+	location: {
+		lat: 40.626446,
+		lng: 22.948426
+	}
+}, {
+	title: 'Arch of Galerius',
+	location: {
+		lat: 40.63211,
+		lng: 22.951668
+	}
+}, {
+	title: 'Alexander the Great Statue',
+	location: {
+		lat: 40.624053,
+		lng: 22.949864
+	}
+}, {
+	title: 'Museum of Byzantine Culture',
+	location: {
+		lat: 40.6239,
+		lng: 22.955058
+	}
+}, {
+	title: 'War Museum of Thessaloniki',
+	location: {
+		lat: 40.624275,
+		lng: 22.959536
+	}
+}, {
+	title: 'Square Ancient Agora',
+	location: {
+		lat: 40.636706,
+		lng: 22.944977
+	}
+}, {
+	title: 'Statue of Eleftherios Venizelos',
+	location: {
+		lat: 40.63615,
+		lng: 22.944429
+	}
+}];
+
 function initMap() {
 	var styles = [{
 		featureType: 'water',
@@ -13,63 +70,6 @@ function initMap() {
 			color: '#19a0d8'
 		}]
 	}];
-
-	// Constructor creates a new map - only center and zoom are required.
-
-
-	// These are the real estate listings that will be shown to the user.
-	// Normally we'd have these in a database instead.
-	var locations = [{
-		title: 'Macedonian Museum of Contemporary Art',
-		location: {
-			lat: 40.627276,
-			lng: 22.95465
-		}
-	}, {
-		title: 'White Tower of Thessaloniki',
-		location: {
-			lat: 40.626446,
-			lng: 22.948426
-		}
-	}, {
-		title: 'Arch of Galerius',
-		location: {
-			lat: 40.63211,
-			lng: 22.951668
-		}
-	}, {
-		title: 'Alexander the Great Statue',
-		location: {
-			lat: 40.624053,
-			lng: 22.949864
-		}
-	}, {
-		title: 'Museum of Byzantine Culture',
-		location: {
-			lat: 40.6239,
-			lng: 22.955058
-		}
-	}, {
-		title: 'War Museum of Thessaloniki',
-		location: {
-			lat: 40.624275,
-			lng: 22.959536
-		}
-	}, {
-		title: 'Square Ancient Agora',
-		location: {
-			lat: 40.636706,
-			lng: 22.944977
-		}
-	}, {
-		title: 'Statue of Eleftherios Venizelos',
-		location: {
-			lat: 40.63615,
-			lng: 22.944429
-		}
-	}];
-
-
 
 
 	map = new google.maps.Map(document.getElementById('map'), {
@@ -111,72 +111,32 @@ function initMap() {
 	// Extend the boundaries of the map for each marker
 	map.fitBounds(bounds);
 
-	var availableTags = [];
-	for (i = 0; i < locations.length; i++) {
-		availableTags.push(locations[i].title);
-	}
-	/*	$("#tags").autocomplete({
-			source: availableTags
-		});
-	*/
-
-	//	console.log(locations.length);
-
-	/*for ( i = 0; i < locations.length; i++) {
-	console.log(locations[i].title);
-}
-*/
-
 
 	var viewModel = function () {
 		var self = this;
 		self.filter = ko.observable('');
-		self.items = ko.observableArray(availableTags)
+		self.title = ko.observableArray(locations)
 
 		self.filteredItems = ko.computed(function () {
-			var filter = self.filter();
+			var filter = self.filter().toLowerCase();
 			if (!filter) {
-				return self.items();
+				return self.title();
+			} else {
+				return ko.utils.arrayFilter(self.title(), function (i) {
+					var string = i.title.toLowerCase();
+					var result = (string.search(filter) >= 0);
+
+					return result;
+
+
+				});
 			}
-			return self.items().filter(function (i) {
-				return i.indexOf(filter) > -1;
-			});
 		});
 	};
 
 
 	ko.applyBindings(new viewModel());
 
-
-
-	//	ko.applyBindings(new AppViewModel());
-
-
-	/*
-	var match = function(x)) {
-
-    this.match = function (data, event){
-    alert('you clicked: ' + event.target.value);
-    }
-};
-
-ko.applyBindings(new match());
-	*/
-	/*
-	function match(x) {
-	for (var i = 0; i < locations.length; i++) {
-		if (locations[i].title == x.title) {
-		//	marker = locations[i];
-			 console.log(locations[i]);
-			/** Centers the clicked marker */
-	//	map.panTo({lat: (x.location.lat), lng: (x.location.lng)});
-	//	infowindow.open(map, marker); 
-	/** Calles toggleBounce, below */
-	//	toggleBounce(x, marker);
-
-	/*	}
-	}
-	}*/
 
 }
 
@@ -195,7 +155,6 @@ function populateInfoWindow(marker, infowindow) {
 		var coords = marker.position.toString().replace(/[()]/g, "");
 		var url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=" + coords + "&sensor=false";
 		var imageStreetView = "https://maps.googleapis.com/maps/api/streetview?size=800x400&location=";
-
 		var urlNewYork = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
 		urlNewYork += '?' + $.param({
 			'api-key': "d025f3b81d514469b78f879e6433e628",
@@ -204,6 +163,25 @@ function populateInfoWindow(marker, infowindow) {
 			'fl': "lead_paragraph",
 			'page': 0
 		});
+
+		/*	$.ajax({
+			url: url,
+			method: 'GET',
+			success: function (data) {
+				var address = data.results[0].formatted_address;
+		
+				infowindow.setContent('<div class="col-sx12"><h3>' + marker.title + '</h3>' +
+							    '<h4>' + address + '</h4>' +
+								'<img class="img-responsive" src="' + imageStreetView + coords + '"></div>');
+							infowindow.open(map, marker);
+							// Make sure the marker property is cleared if the infowindow is closed.
+							infowindow.addListener('closeclick', function () {
+								infowindow.setMarker = null;
+							});
+		
+	*/
+
+
 
 		$.ajax({
 			url: url,
@@ -215,20 +193,31 @@ function populateInfoWindow(marker, infowindow) {
 					url: urlNewYork,
 					method: 'GET',
 					success: function (newdata) {
-					var postNewYork = newdata.response.docs[0].lead_paragraph ;
-						
-								//		console.log(address);
-		// console.log(marker);
-		infowindow.setContent('<div><h3>' + marker.title + '</h3>' +
-			// '<p>' + window.adress + '</p>' +
-			'<h4>' + address + '</h4>' +
-			'<p>' + postNewYork + '</p>'+  
-			'<img src="' + imageStreetView + coords + '"></div>');
-		infowindow.open(map, marker);
-		// Make sure the marker property is cleared if the infowindow is closed.
-		infowindow.addListener('closeclick', function () {
-			infowindow.setMarker = null;
-		});
+						var postNewYork = newdata.response.docs[0].lead_paragraph;
+						if (postNewYork !== "") {
+							infowindow.setContent('<div class="col-sx12"><h3>' + marker.title + '</h3>' +
+								'<h4>' + address + '</h4>' +
+								'<p>' + postNewYork + '</p>' +
+								'<img class="img-responsive" src="' + imageStreetView + coords + '"></div>');
+							infowindow.open(map, marker);
+							// Make sure the marker property is cleared if the infowindow is closed.
+							infowindow.addListener('closeclick', function () {
+								infowindow.setMarker = null;
+							});
+
+						} else {
+
+							infowindow.setContent('<div class="col-sx12"><h3>' + marker.title + '</h3>' +
+								'<h4>' + address + '</h4>' +
+								'<img class="img-responsive" src="' + imageStreetView + coords + '"></div>');
+							infowindow.open(map, marker);
+							// Make sure the marker property is cleared if the infowindow is closed.
+							infowindow.addListener('closeclick', function () {
+								infowindow.setMarker = null;
+							});
+
+
+						}
 
 
 					},
@@ -236,9 +225,15 @@ function populateInfoWindow(marker, infowindow) {
 				});
 
 			},
-
+			error: function (xhr, ajaxOptions, thrownError) {
+					alert(xhr.status);
+					alert(thrownError);
+				}
+				/*.fail(
+			
+			alert("Something going wrong with NY.")
+)*/
 		});
-
 
 
 

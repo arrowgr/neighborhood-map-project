@@ -1,18 +1,15 @@
 li.name-art {
-    text-align: left;
-    font-size: smaller;
-    list-style: none;
+	text-align: left;
+	font-size: smaller;
+	list-style: none;
 }
-#show,#submit {
-
-    height: 30px;
-    width: 30px;
-    background-repeat: no-repeat;
-    background-position: center center;
-    border: none;
+#show, #submit {
+	height: 30px;
+	width: 30px;
+	background-repeat: no-repeat;
+	background-position: center center;
+	border: none;
 }
-
-
 .coverall {
 	width: 100%;
 	height: 100%;
@@ -61,4 +58,12 @@ hr {
 }
 .text {
 	font-size: 12px;
+}
+
+@media (max-width:801px) {
+.coverall {
+	width: 100%;
+	height: 100%;
+	display: block;
+}
 }
