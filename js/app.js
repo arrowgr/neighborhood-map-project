@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 
 var map;
@@ -6,11 +6,7 @@ var map;
 // Create a new blank array for all the listing markers.
 var markers = [];
 
-
-
 // Constructor creates a new map - only center and zoom are required.
-
-
 // These are the real estate listings that will be shown to the user.
 // Normally we'd have these in a database instead.
 var locations = [{
@@ -74,10 +70,10 @@ function initMap() {
 
 	map = new google.maps.Map(document.getElementById('map'), {
 		center: {
-			lat: 40.6212524,
-			lng: 22.9110079
+			lat: 40.6312524,
+			lng: 22.9613079
 		},
-		zoom: 16
+		zoom: 15
 	});
 
 	var largeInfowindow = new google.maps.InfoWindow();
@@ -91,7 +87,7 @@ function initMap() {
 		var position = locations[i].location;
 		var title = locations[i].title;
 		// Create a marker per location, and put into markers array.
-		var image = 'img/marker.png'
+		var image = 'img/marker.png';
 		var marker = new google.maps.Marker({
 			icon: image,
 			map: map,
@@ -99,43 +95,96 @@ function initMap() {
 			title: title,
 			animation: google.maps.Animation.DROP,
 			id: i
+
 		});
+		marker.setVisible(true);
 		// Push the marker to our array of markers.
 		markers.push(marker);
 		// Create an onclick event to open an infowindow at each marker.
 		marker.addListener('click', function () {
 			populateInfoWindow(this, largeInfowindow);
+
 			toggleBounce(this);
 		});
-	//	marker.addListener('click', toggleBounce);
-		
+		//	marker.addListener('click', toggleBounce);
+
 		bounds.extend(markers[i].position);
 	}
 	// Extend the boundaries of the map for each marker
-	map.fitBounds(bounds);
+	//map.fitBounds(bounds);
+
+	google.maps.event.addDomListener(window, 'resize', function () {
+		map.fitBounds(bounds); // `bounds` is a `LatLngBounds` object
+	});
 
 	function toggleBounce(marker) {
-        if (marker.getAnimation() !== null) {
-          marker.setAnimation(null);
-        } else {
-         marker.setAnimation(google.maps.Animation.BOUNCE);
-        }
-      }
-	
+		if (marker.getAnimation() !== null) {
 
+			marker.setAnimation(null);
+
+		} else {
+
+			marker.setAnimation(google.maps.Animation.BOUNCE);
+			window.setTimeout(function () {
+				marker.setAnimation(null);
+			}, 2000);
+		}
+	}
+
+
+	function stopAnimateMarkers() {
+		for (var i = 0; i < markers.length; i++) {
+			markers[i].setAnimation(null);
+		}
+
+	}
+
+	function visibleMarkers() {
+		for (var i = 0; i < markers.length; i++) {
+			markers[i].setVisible(true);
+		}
+		
+	}
+
+	function visibleMarkersConc(filter) {
+
+		for (var i = 0; i < markers.length; i++) {
+			//	 console.log(markers[i].title.toLowerCase());
+			//	 console.log(filter);
+
+			if (markers[i].title.toLowerCase().search(filter) >= 0) {
+				//	console.log(markers[i].title.toLowerCase());
+				markers[i].setVisible(true);
+			} else {
+
+				markers[i].setVisible(false);
+			}
+
+		}
+
+	}
+	
 	var viewModel = function () {
 		var self = this;
 		self.filter = ko.observable('');
-		self.title = ko.observableArray(locations)
-
+		self.title = ko.observableArray(locations);
 		self.filteredItems = ko.computed(function () {
 			var filter = self.filter().toLowerCase();
+
 			if (!filter) {
+				visibleMarkers();
 				return self.title();
+
+
 			} else {
+				visibleMarkersConc(filter);
 				return ko.utils.arrayFilter(self.title(), function (i) {
 					var string = i.title.toLowerCase();
 					var result = (string.search(filter) >= 0);
+
+					// var mark = (string.search(markers.title) >= 0);
+					// console.log(filter);
+					// console.log(self.markers);
 					return result;
 
 
@@ -170,8 +219,8 @@ function populateInfoWindow(marker, infowindow) {
 			'fl': "lead_paragraph",
 			'page': 0
 		});
-		
-	
+
+
 
 		$.ajax({
 			url: url,
@@ -183,11 +232,11 @@ function populateInfoWindow(marker, infowindow) {
 					url: urlNewYork,
 					method: 'GET',
 					success: function (newdata) {
-						var postNewYork = newdata.response.docs[0].lead_paragraph;
-						if (postNewYork !== "") {
+
+						if (newdata.response.docs.length > 0) {
 							infowindow.setContent('<div class="col-sx12"><h3>' + marker.title + '</h3>' +
 								'<h4>' + address + '</h4>' +
-								'<p>' + postNewYork + '</p>' +
+								'<p>' + newdata.response.docs[0].lead_paragraph + '</p>' +
 								'<img class="img-responsive" src="' + imageStreetView + coords + '"></div>');
 							infowindow.open(map, marker);
 							// Make sure the marker property is cleared if the infowindow is closed.
@@ -211,13 +260,17 @@ function populateInfoWindow(marker, infowindow) {
 
 
 					},
+					error: function (xhr, ajaxOptions, thrownError) {
+						alert("Ooopps something going wrong pls retry");
+						//	alert(thrownError);
+					}
 
 				});
 
 			},
 			error: function (xhr, ajaxOptions, thrownError) {
-				alert(xhr.status);
-				alert(thrownError);
+				alert("Ooopps something going wrong pls retry");
+				//	alert(thrownError);
 			}
 		});
 
