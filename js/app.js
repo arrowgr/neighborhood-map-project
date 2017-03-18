@@ -105,12 +105,23 @@ function initMap() {
 		// Create an onclick event to open an infowindow at each marker.
 		marker.addListener('click', function () {
 			populateInfoWindow(this, largeInfowindow);
+			toggleBounce(this);
 		});
+	//	marker.addListener('click', toggleBounce);
+		
 		bounds.extend(markers[i].position);
 	}
 	// Extend the boundaries of the map for each marker
 	map.fitBounds(bounds);
 
+	function toggleBounce(marker) {
+        if (marker.getAnimation() !== null) {
+          marker.setAnimation(null);
+        } else {
+         marker.setAnimation(google.maps.Animation.BOUNCE);
+        }
+      }
+	
 
 	var viewModel = function () {
 		var self = this;
@@ -125,7 +136,6 @@ function initMap() {
 				return ko.utils.arrayFilter(self.title(), function (i) {
 					var string = i.title.toLowerCase();
 					var result = (string.search(filter) >= 0);
-
 					return result;
 
 
@@ -139,9 +149,6 @@ function initMap() {
 
 
 }
-
-
-
 
 
 // This function populates the infowindow when the marker is clicked. We'll only allow
@@ -163,25 +170,8 @@ function populateInfoWindow(marker, infowindow) {
 			'fl': "lead_paragraph",
 			'page': 0
 		});
-
-		/*	$.ajax({
-			url: url,
-			method: 'GET',
-			success: function (data) {
-				var address = data.results[0].formatted_address;
 		
-				infowindow.setContent('<div class="col-sx12"><h3>' + marker.title + '</h3>' +
-							    '<h4>' + address + '</h4>' +
-								'<img class="img-responsive" src="' + imageStreetView + coords + '"></div>');
-							infowindow.open(map, marker);
-							// Make sure the marker property is cleared if the infowindow is closed.
-							infowindow.addListener('closeclick', function () {
-								infowindow.setMarker = null;
-							});
-		
-	*/
-
-
+	
 
 		$.ajax({
 			url: url,
@@ -226,13 +216,9 @@ function populateInfoWindow(marker, infowindow) {
 
 			},
 			error: function (xhr, ajaxOptions, thrownError) {
-					alert(xhr.status);
-					alert(thrownError);
-				}
-				/*.fail(
-			
-			alert("Something going wrong with NY.")
-)*/
+				alert(xhr.status);
+				alert(thrownError);
+			}
 		});
 
 
