@@ -110,12 +110,34 @@ function initMap() {
 
 		bounds.extend(markers[i].position);
 	}
+	
+	this.locme = function (data) {
+// 	;
+		
+		//console.log(data.title);
+		for (var i = 0; i < markers.length; i++) {
+		//	markers[i].title ;
+			// console.log(markers[i].title);
+			if(data.title == markers[i].title){
+				
+			console.log(markers[i].title);
+				
+				google.maps.event.trigger(markers[i], 'click');
+			//	populateInfoWindow(markers[i].title, largeInfowindow) ;
+			//	console.log(data.title);
+			}
+		}
+	};
+	
 	// Extend the boundaries of the map for each marker
 	//map.fitBounds(bounds);
 
 	google.maps.event.addDomListener(window, 'resize', function () {
 		map.fitBounds(bounds); // `bounds` is a `LatLngBounds` object
 	});
+	
+	
+	
 
 	function toggleBounce(marker) {
 		if (marker.getAnimation() !== null) {
@@ -168,6 +190,10 @@ function initMap() {
 		var self = this;
 		self.filter = ko.observable('');
 		self.title = ko.observableArray(locations);
+		
+		
+		 
+		   
 		self.filteredItems = ko.computed(function () {
 			var filter = self.filter().toLowerCase();
 
