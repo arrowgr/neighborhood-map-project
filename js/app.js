@@ -235,7 +235,7 @@ function populateInfoWindow(marker, infowindow) {
 		infowindow.marker = marker;
 
 		var coords = marker.position.toString().replace(/[()]/g, "");
-		var url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=" + coords + "&sensor=false";
+		var url = "//maps.googleapis.com/maps/api/geocode/json?latlng=" + coords + "&sensor=false";
 		var imageStreetView = "https://maps.googleapis.com/maps/api/streetview?size=800x400&location=";
 		var urlNewYork = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
 		urlNewYork += '?' + $.param({
